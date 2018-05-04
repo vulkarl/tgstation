@@ -24,7 +24,7 @@
 	name = "motion-sensitive security camera"
 
 /obj/machinery/camera/motion/Initialize()
-	..()
+	. = ..()
 	upgradeMotion()
 
 // ALL UPGRADES
@@ -53,7 +53,8 @@
 	var/area/A = get_area(src)
 	if(A)
 		for(var/obj/machinery/camera/autoname/C in GLOB.machines)
-			if(C == src) continue
+			if(C == src)
+				continue
 			var/area/CA = get_area(C)
 			if(CA.type == A.type)
 				if(C.number)
@@ -78,10 +79,10 @@
 	upgrades |= CAMERA_UPGRADE_EMP_PROOF
 
 /obj/machinery/camera/proc/upgradeXRay()
-	assembly.upgrades.Add(new /obj/item/device/analyzer(assembly))
+	assembly.upgrades.Add(new /obj/item/analyzer(assembly))
 	upgrades |= CAMERA_UPGRADE_XRAY
 
 // If you are upgrading Motion, and it isn't in the camera's Initialize(), add it to the machines list.
 /obj/machinery/camera/proc/upgradeMotion()
-	assembly.upgrades.Add(new /obj/item/device/assembly/prox_sensor(assembly))
+	assembly.upgrades.Add(new /obj/item/assembly/prox_sensor(assembly))
 	upgrades |= CAMERA_UPGRADE_MOTION

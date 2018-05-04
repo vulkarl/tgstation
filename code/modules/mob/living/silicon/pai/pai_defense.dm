@@ -36,7 +36,7 @@
 				spawn(10)
 					fold_in()
 					if(user.put_in_hands(card))
-						user.visible_message("<span class='notice'>[user] promptly scoops up their pAI's card.</span>")
+						user.visible_message("<span class='notice'>[user] promptly scoops up [user.p_their()] pAI's card.</span>")
 			else
 				visible_message("<span class='danger'>[user] stomps on [src]!.</span>")
 				take_holo_damage(2)
@@ -57,7 +57,7 @@
 	return FALSE //No we're not flammable
 
 /mob/living/silicon/pai/proc/take_holo_damage(amount)
-	emitterhealth = Clamp((emitterhealth - amount), -50, emittermaxhealth)
+	emitterhealth = CLAMP((emitterhealth - amount), -50, emittermaxhealth)
 	if(emitterhealth < 0)
 		fold_in(force = TRUE)
 	to_chat(src, "<span class='userdanger'>The impact degrades your holochassis!</span>")

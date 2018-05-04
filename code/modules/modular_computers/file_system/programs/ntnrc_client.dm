@@ -39,7 +39,7 @@
 		if("PRG_joinchannel")
 			. = 1
 			var/datum/ntnet_conversation/C
-			for(var/datum/ntnet_conversation/chan in GLOB.ntnet_global.chat_channels)
+			for(var/datum/ntnet_conversation/chan in SSnetworks.station_network.chat_channels)
 				if(chan.id == text2num(params["id"]))
 					C = chan
 					break
@@ -121,7 +121,7 @@
 				logfile.stored_data += "[logstring]\[BR\]"
 			logfile.stored_data += "\[b\]Logfile dump completed.\[/b\]"
 			logfile.calculate_size()
-			var/obj/item/weapon/computer_hardware/hard_drive/hard_drive = computer.all_components[MC_HDD]
+			var/obj/item/computer_hardware/hard_drive/hard_drive = computer.all_components[MC_HDD]
 			if(!computer || !hard_drive || !hard_drive.store_file(logfile))
 				if(!computer)
 					// This program shouldn't even be runnable without computer.
@@ -183,7 +183,7 @@
 	..()
 
 /datum/computer_file/program/chatclient/ui_data(mob/user)
-	if(!GLOB.ntnet_global || !GLOB.ntnet_global.chat_channels)
+	if(!SSnetworks.station_network || !SSnetworks.station_network.chat_channels)
 		return
 
 	var/list/data = list()
@@ -212,7 +212,7 @@
 
 	else // Channel selection screen
 		var/list/all_channels[0]
-		for(var/C in GLOB.ntnet_global.chat_channels)
+		for(var/C in SSnetworks.station_network.chat_channels)
 			var/datum/ntnet_conversation/conv = C
 			if(conv && conv.title)
 				all_channels.Add(list(list(

@@ -1,31 +1,31 @@
-/obj/item/device/assembly_holder
+/obj/item/assembly_holder
 	name = "Assembly"
 	icon = 'icons/obj/assemblies/new_assemblies.dmi'
 	icon_state = "holder"
 	item_state = "assembly"
 	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
-	flags = CONDUCT
+	flags_1 = CONDUCT_1
 	throwforce = 5
 	w_class = WEIGHT_CLASS_SMALL
 	throw_speed = 2
 	throw_range = 7
 
-	var/obj/item/device/assembly/a_left = null
-	var/obj/item/device/assembly/a_right = null
+	var/obj/item/assembly/a_left = null
+	var/obj/item/assembly/a_right = null
 
-/obj/item/device/assembly_holder/IsAssemblyHolder()
+/obj/item/assembly_holder/IsAssemblyHolder()
 	return 1
 
 
-/obj/item/device/assembly_holder/proc/assemble(obj/item/device/assembly/A, obj/item/device/assembly/A2, mob/user)
+/obj/item/assembly_holder/proc/assemble(obj/item/assembly/A, obj/item/assembly/A2, mob/user)
 	attach(A,user)
 	attach(A2,user)
 	name = "[A.name]-[A2.name] assembly"
 	update_icon()
-	SSblackbox.add_details("assembly_made","[initial(A.name)]-[initial(A2.name)]")
+	SSblackbox.record_feedback("tally", "assembly_made", 1, "[initial(A.name)]-[initial(A2.name)]")
 
-/obj/item/device/assembly_holder/proc/attach(obj/item/device/assembly/A, mob/user)
+/obj/item/assembly_holder/proc/attach(obj/item/assembly/A, mob/user)
 	if(!A.remove_item_from_storage(src))
 		if(user)
 			user.transferItemToLoc(A, src)
@@ -38,7 +38,7 @@
 	else
 		a_right = A
 
-/obj/item/device/assembly_holder/update_icon()
+/obj/item/assembly_holder/update_icon()
 	cut_overlays()
 	if(a_left)
 		add_overlay("[a_left.icon_state]_left")
@@ -55,48 +55,48 @@
 	if(master)
 		master.update_icon()
 
-/obj/item/device/assembly_holder/Crossed(atom/movable/AM as mob|obj)
+/obj/item/assembly_holder/Crossed(atom/movable/AM as mob|obj)
 	if(a_left)
 		a_left.Crossed(AM)
 	if(a_right)
 		a_right.Crossed(AM)
 
-/obj/item/device/assembly_holder/on_found(mob/finder)
+/obj/item/assembly_holder/on_found(mob/finder)
 	if(a_left)
 		a_left.on_found(finder)
 	if(a_right)
 		a_right.on_found(finder)
 
-/obj/item/device/assembly_holder/Move()
-	..()
+/obj/item/assembly_holder/Move()
+	. = ..()
 	if(a_left && a_right)
 		a_left.holder_movement()
 		a_right.holder_movement()
-	return
 
-/obj/item/device/assembly_holder/attack_hand()//Perhapse this should be a holder_pickup proc instead, can add if needbe I guess
+/obj/item/assembly_holder/attack_hand()//Perhapse this should be a holder_pickup proc instead, can add if needbe I guess
+	. = ..()
+	if(.)
+		return
 	if(a_left && a_right)
 		a_left.holder_movement()
 		a_right.holder_movement()
-	..()
-	return
 
-/obj/item/device/assembly_holder/attackby(obj/item/weapon/W, mob/user, params)
-	if(istype(W, /obj/item/weapon/screwdriver))
+/obj/item/assembly_holder/attackby(obj/item/W, mob/user, params)
+	if(istype(W, /obj/item/screwdriver))
 		var/turf/T = get_turf(src)
 		if(!T)
 			return 0
 		if(a_left)
 			a_left.holder = null
-			a_left.loc = T
+			a_left.forceMove(T)
 		if(a_right)
 			a_right.holder = null
-			a_right.loc = T
+			a_right.forceMove(T)
 		qdel(src)
 	else
 		..()
 
-/obj/item/device/assembly_holder/attack_self(mob/user)
+/obj/item/assembly_holder/attack_self(mob/user)
 	src.add_fingerprint(user)
 	if(!a_left || !a_right)
 		to_chat(user, "<span class='danger'>Assembly part missing!</span>")
@@ -113,7 +113,7 @@
 		a_right.attack_self(user)
 
 
-/obj/item/device/assembly_holder/proc/process_activation(obj/D, normal = 1, special = 1)
+/obj/item/assembly_holder/proc/process_activation(obj/D, normal = 1, special = 1)
 	if(!D)
 		return 0
 	if((normal) && (a_right) && (a_left))
